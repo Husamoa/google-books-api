@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, {Component, Fragment} from 'react';
 import SearchInput from './SearchInput';
 import BookList from './BookList';
 
@@ -8,56 +8,84 @@ export default class Books extends Component {
     this.state = {
       books: [],
       searchField: "",
-      responseError: false
+      responseError: false,
+      maxResults: 12
     }
   }
 
   searchBook = (e) => {
     e.preventDefault();
 
-    fetch(`https://www.googleapis.com/books/v1/volumes?q=${this.state.searchField}`, {
-        method: "get",
-        headers: {
-          "Content-Type": "application/json",
-        },
+    fetch(`https://www.googleapis.com/books/v1/volumes?q=${this.state.searchField}&maxResults=${this.state.maxResults}`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }).then(response => response.json()).then(data => {
+      this.setState({
+        responseError: false,
+        books: [...data.items]
       })
-      .then(response => response.json())
-      .then(data => {
-        this.setState({
-          responseError: false,
-          books: [...data.items]
-        })
-      })
-      .catch(error => {
-        console.log(error)
-        this.setState({
-          responseError: true
-        })
-      })
+    }).catch(error => {
+      console.log(error)
+      this.setState({responseError: true})
+    })
   }
 
   handleSearch = (e) => {
-    this.setState({ searchField: e.target.value })
+    this.setState({searchField: e.target.value, maxResults: 12})
   }
 
+  isBottom(el) {
+    return el.getBoundingClientRect().bottom <= window.innerHeight;
+  }
 
-    render() {
-      const renderBookList = this.state.responseError ? <div className="container"><div className="alert alert-warning col-12 text-center" role="alert">No results found</div></div> : <BookList books={this.state.books} />
+  componentDidMount() {
+    document.addEventListener('scroll', this.trackScrolling);
+  }
 
+  componentWillUnmount() {
+    document.removeEventListener('scroll', this.trackScrolling);
+  }
 
-        return (
-            <Fragment>
-              <div className="container">
-              <div className="row d-flex justify-content-center mb-5">
-              <SearchInput searchBook={this.searchBook} handleSearch={this.handleSearch}/>
-            </div>
-          </div>
-          <div className="container-fluid">
-            <div className="row">
-              {renderBookList}
-              </div>
-            </div>
-            </Fragment>
-        );
+  trackScrolling = () => {
+    const wrappedElement = document.getElementById('bookList');
+    if (this.isBottom(wrappedElement)) {
+      this.setState({
+        maxResults: this.state.maxResults + 12
+      })
+      if(this.state.maxResults <= 36) {
+        this.searchBook(event);
+      } else {
+        this.setState({
+          maxResults: 40
+        })
+        this.searchBook(event);
+        document.removeEventListener('scroll', this.trackScrolling);
+      }
     }
+  };
+
+  render() {
+    const renderBookList = this.state.responseError
+      ? <div className="container">
+          <div className="alert alert-warning col-12 text-center" role="alert">No results found</div>
+        </div>
+      : <BookList books={this.state.books}/>
+
+    return (<Fragment>
+      <div className="container-fluid bg-light d-flex justify-content-center">
+        <div className="container d-flex justify-content-center">
+          <div className="row">
+            <SearchInput searchBook={this.searchBook} handleSearch={this.handleSearch}/>
+          </div>
+        </div>
+      </div>
+      <div className="container-fluid">
+        <div id={'bookList'} className="row">
+          {renderBookList}
+        </div>
+      </div>
+    </Fragment>);
+  }
 }

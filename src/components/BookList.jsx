@@ -22,7 +22,7 @@ const BookList = (props) => {
     <Fragment>
       {
         props.books.map((book, i) => {
-          return ( <div className="col mb-5" key={i}>
+          return ( <div className="col mb-5 d-flex justify-content-center" key={i}>
           <BookCard
             info={book.volumeInfo}
             image={image(book.volumeInfo)}
