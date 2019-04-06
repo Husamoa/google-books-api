@@ -88,9 +88,9 @@ module.exports = function (env) {
             new MiniCSS({
                 filename: "app.css", // definiujemy adres pliku css
             }),
-            // new CopyWebpackPlugin([
-            //     {from: './src/images', to: 'images'},
-            // ])
+            new CopyWebpackPlugin([
+                {from: './src/images', to: 'images'},
+            ])
 
         ]
     }
