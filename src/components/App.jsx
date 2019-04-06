@@ -11,8 +11,7 @@ export default class App extends Component {
       search: e.target.value,
     })
   }
-
-
+  
     render() {
       const { search } = this.state;
         return (

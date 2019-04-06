@@ -7,12 +7,14 @@ export default class Books extends Component {
     super(props);
     this.state = {
       books: [],
-      searchField: ""
+      searchField: "",
+      responseError: false
     }
   }
 
   searchBook = (e) => {
     e.preventDefault();
+
     fetch(`https://www.googleapis.com/books/v1/volumes?q=${this.state.searchField}`, {
         method: "get",
         headers: {
@@ -21,9 +23,15 @@ export default class Books extends Component {
       })
       .then(response => response.json())
       .then(data => {
-        console.log(data.items)
         this.setState({
+          responseError: false,
           books: [...data.items]
+        })
+      })
+      .catch(error => {
+        console.log(error)
+        this.setState({
+          responseError: true
         })
       })
   }
@@ -34,16 +42,19 @@ export default class Books extends Component {
 
 
     render() {
+      const renderBookList = this.state.responseError ? <div className="container"><div className="alert alert-warning col-12 text-center" role="alert">No results found</div></div> : <BookList books={this.state.books} />
+
+
         return (
             <Fragment>
               <div className="container">
-              <div className="row d-flex justify-content-center">
+              <div className="row d-flex justify-content-center mb-5">
               <SearchInput searchBook={this.searchBook} handleSearch={this.handleSearch}/>
             </div>
           </div>
           <div className="container-fluid">
             <div className="row">
-              <BookList books={this.state.books} />
+              {renderBookList}
               </div>
             </div>
             </Fragment>

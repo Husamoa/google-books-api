@@ -2,16 +2,32 @@ import React, {Fragment} from 'react';
 import BookCard from './BookCard';
 
 const BookList = (props) => {
+  const image = (volumeInfo) => {
+    if (volumeInfo.hasOwnProperty('imageLinks')) {
+      return volumeInfo.imageLinks.thumbnail;
+    } else {
+      return './images/noImage.png'
+    }
+  }
+
+  const description = (volumeInfo) => {
+    if (volumeInfo.hasOwnProperty('description')) {
+      return `${volumeInfo.description.split(" ").splice(0, 20).join(" ")}...`;
+    } else {
+      return 'No description'
+    }
+  }
+
   return (
     <Fragment>
       {
         props.books.map((book, i) => {
-          return ( <div className="col">
+          return ( <div className="col mb-5" key={i}>
           <BookCard
-            key={i}
-            image={book.volumeInfo.imageLinks.thumbnail}
+            info={book.volumeInfo}
+            image={image(book.volumeInfo)}
             title={book.volumeInfo.title}
-            description={book.volumeInfo.description}
+            description={description(book.volumeInfo)}
             />
         </div>
         )
