@@ -61,7 +61,6 @@ export default class Books extends Component {
           maxResults: 40
         })
         this.searchBook(event);
-        document.removeEventListener('scroll', this.trackScrolling);
       }
     }
   };
