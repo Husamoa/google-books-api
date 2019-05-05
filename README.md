@@ -2,7 +2,7 @@
 Recruitment task using React
 
 Demo: 
-[Lunch App](https://husamoa.github.io/stxnext/)
+[Lunch App](https://husamoa.github.io/google-books-api/)
 
 ## Used technologies
 - React
