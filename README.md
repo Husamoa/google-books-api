@@ -1,4 +1,4 @@
-# STX NEXT
+# React App showing books search results
 Recruitment task using React
 
 Demo: 
